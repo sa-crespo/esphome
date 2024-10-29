@@ -27,7 +27,7 @@ void BinarySensorMulti::process_sensors_() {
 }
 
 void BinarySensorMulti::add_channel(binary_sensor::BinarySensor *sensor) {
-  BinarySensorMultiGpioChannel sensor_channel{
+  BinarySensorMultiChannel sensor_channel{
       .binary_sensor = sensor,
   };
   this->channels_.push_back(sensor_channel);

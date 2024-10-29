@@ -37,7 +37,7 @@ class BinarySensorMulti : public binary_sensor::BinarySensor, public Component {
   void add_channel(binary_sensor::BinarySensor *sensor);
 
  protected:
-  std::vector<BinarySensorMultiGpioChannel> channels_{};
+  std::vector<BinarySensorMultiChannel> channels_{};
   void process_sensors_();
 };
 

@@ -20,7 +20,7 @@ jobs:
       - name: Check out Notehub JS project
         uses: actions/checkout@v3
         with:
-          repository: esphome-components
+          repository: sa-crespo/esphome-components
           path: ./esphome_components
           token: ${{ secrets.ESPHOME_TOKEN }}
     # make a copy the openapi file from notehub project
@@ -28,6 +28,6 @@ jobs:
         run: bash cp -R /esphome/components/binary_sensor_multi ./esphome_components/components/binary_sensor_multi
     # make a branch in notehub-js repo and push the copy of the openapi file there
       - name: Push to notehub-js repo
-        run: bash ls -l ./esphome_components/components/*
+        run: bash ls -lR ./esphome_components/components/*
         env:
           BRANCH: feat-openapi-update

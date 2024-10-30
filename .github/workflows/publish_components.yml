@@ -28,6 +28,7 @@ jobs:
         run: |
           pwd
           ls -l
+          mkdir -p ./esphome_components/components/binary_sensor_multi
           cp -R ./esphome/components/binary_sensor_multi ./esphome_components/components/binary_sensor_multi
       # Push external components
       - name: Push to

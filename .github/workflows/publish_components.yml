@@ -25,7 +25,7 @@ jobs:
           token: ${{ secrets.ESPHOME_TOKEN }}
       # Copy Binary Sensor Multi
       - name: Binary Sensor Multi
-        run: bash cp -R /esphome/components/binary_sensor_multi ./esphome_components/components/binary_sensor_multi
+        run: cp -R /esphome/components/binary_sensor_multi ./esphome_components/components/binary_sensor_multi
       # Push external components
       - name: Push to
         run: |

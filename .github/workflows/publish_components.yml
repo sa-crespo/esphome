@@ -15,6 +15,9 @@ jobs:
       # Check out esphome
       - name: Check out esphome
         uses: actions/checkout@v3
+        with:
+          sparse-checkout: |
+            /esphome/components/binary_sensor_multi
       # Check out esphome-components
       - name: Check out esphome-components
         uses: actions/checkout@v3

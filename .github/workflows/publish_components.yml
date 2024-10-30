@@ -10,25 +10,28 @@ on:
 jobs:
   # This workflow contains a single job called "publish_external_components"
   publish_external_components:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
     steps:
-    # Runs a single command using the runners shell
+      # Check out esphome
       - name: Check out esphome
         uses: actions/checkout@v3
-    # check out notehub-js project using token generated in that project to successfully access it from inside the Notehub GitHub Action workflow
-      - name: Check out Notehub JS project
+      # Check out esphome-components
+      - name: Check out esphome-components
         uses: actions/checkout@v3
         with:
           repository: sa-crespo/esphome-components
-          branch: dev
+          ref: dev
           path: ./esphome_components
           token: ${{ secrets.ESPHOME_TOKEN }}
-    # make a copy the openapi file from notehub project
+      # Copy Binary Sensor Multi
       - name: Binary Sensor Multi
         run: bash cp -R /esphome/components/binary_sensor_multi ./esphome_components/components/binary_sensor_multi
-    # make a branch in notehub-js repo and push the copy of the openapi file there
-      - name: Push to notehub-js repo
-        run: bash ls -lR ./esphome_components/components/*
-        env:
-          BRANCH: feat-openapi-update
+      # Push external components
+      - name: Push to
+        run: |
+          cd ./esphome_components
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m "External Components"
+          git push

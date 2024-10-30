@@ -1,32 +1,33 @@
 # This is a basic workflow that is manually triggered
 
-name: Manual workflow
+name: Publish External Components workflow
 
 # Controls when the action will run. Workflow runs when manually triggered using the UI
 # or API.
 on:
   workflow_dispatch:
-    # Inputs the workflow accepts.
-    inputs:
-      name:
-        # Friendly description to be shown in the UI instead of 'name'
-        description: 'Person to greet'
-        # Default value if no value is explicitly provided
-        default: 'World'
-        # Input has to be provided for the workflow to run
-        required: true
-        # The data type of the input
-        type: string
-
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "greet"
-  greet:
+  # This workflow contains a single job called "publish_external_components"
+  publish_external_components:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Runs a single command using the runners shell
-    - name: Send greeting
-      run: echo "Hello ${{ inputs.name }}"
+      - name: Check out esphome
+        uses: actions/checkout@v3
+    # check out notehub-js project using token generated in that project to successfully access it from inside the Notehub GitHub Action workflow
+      - name: Check out Notehub JS project
+        uses: actions/checkout@v3
+        with:
+          repository: esphome-components
+          path: ./esphome_components
+          token: ${{ secrets.ESPHOME_TOKEN }}
+    # make a copy the openapi file from notehub project
+      - name: Binary Sensor Multi
+        run: bash cp -R /esphome/components/binary_sensor_multi ./esphome_components/components/binary_sensor_multi
+    # make a branch in notehub-js repo and push the copy of the openapi file there
+      - name: Push to notehub-js repo
+        run: bash ls -l ./esphome_components/components/*
+        env:
+          BRANCH: feat-openapi-update

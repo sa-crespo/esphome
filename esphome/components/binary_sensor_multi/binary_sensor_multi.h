@@ -16,7 +16,7 @@ struct BinarySensorMultiChannel {
  *
  * Each binary sensor has configured parameters that each mapping type uses to compute the single numerical result
  */
-class BinarySensorMulti : public binary_sensor::BinarySensor, public Component {
+class BinarySensorMulti : public binary_sensor::BinarySensorInitiallyOff, public Component {
  public:
   void dump_config() override;
 
@@ -35,6 +35,11 @@ class BinarySensorMulti : public binary_sensor::BinarySensor, public Component {
    * @param value  The value this binary_sensor represents
    */
   void add_channel(binary_sensor::BinarySensor *sensor);
+  /**
+   * Turn off the sensor without processing filters.
+   *
+   */
+  void turn_off_immedite();
 
  protected:
   std::vector<BinarySensorMultiChannel> channels_{};

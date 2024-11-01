@@ -45,6 +45,7 @@ class BinarySensorMulti : public binary_sensor::BinarySensorInitiallyOff, public
  protected:
   std::vector<BinarySensorMultiChannel> channels_{};
   void process_sensors_();
+  bool check_sensors_();
 };
 
 }  // namespace binary_sensor_multi

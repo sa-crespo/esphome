@@ -40,6 +40,7 @@ class BinarySensorMulti : public binary_sensor::BinarySensorInitiallyOff, public
    *
    */
   void turn_off_immediate();
+  void turn_off_delayed(uint32_t delay);
 
  protected:
   std::vector<BinarySensorMultiChannel> channels_{};

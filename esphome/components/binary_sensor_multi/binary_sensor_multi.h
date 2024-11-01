@@ -46,6 +46,8 @@ class BinarySensorMulti : public binary_sensor::BinarySensorInitiallyOff, public
   std::vector<BinarySensorMultiChannel> channels_{};
   void process_sensors_();
   bool check_sensors_();
+
+  Deduplicator<bool> delay_;
 };
 
 }  // namespace binary_sensor_multi

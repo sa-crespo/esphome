@@ -26,9 +26,12 @@ bool BinarySensorMulti::check_sensors_() {
 
 void BinarySensorMulti::process_sensors_() {
   if (check_sensors_()) {
-    if (this->publish_dedup_.next(true))
-      ESP_LOGD(TAG, "Ligths is on now");
-    this->cancel_timeout("OFF");
+    if (this->delay_.next(true)) {
+      this->cancel_timeout("OFF");
+    }
+    if (this->state == false) {
+      ESP_LOGD(TAG, "Turning on light");
+    }
     this->publish_state(true);
   } else {
     turn_off_delayed(30000);
@@ -43,25 +46,28 @@ void BinarySensorMulti::add_channel(binary_sensor::BinarySensor *sensor) {
 }
 
 void BinarySensorMulti::turn_off_delayed(uint32_t delay) {
-  if (!this->publish_dedup_.next(false))
-    return;
-  ESP_LOGD(TAG, "Ligths will be out in 30 secs");
-  this->set_timeout("OFF", delay, [this]() {
-    ESP_LOGD(TAG, "Delay is off.");
-    this->publish_state(false);
-  });
+  if (this->state) {
+    if (this->delay_.next(false)) {
+      ESP_LOGD(TAG, "Ligths will be out in 30 secs");
+      this->set_timeout("OFF", delay, [this]() {
+        ESP_LOGD(TAG, "Delay is off.");
+        this->publish_state(false);
+      });
+    }
+  }
 }
 
 void BinarySensorMulti::turn_off_immediate() {
-  if (!this->publish_dedup_.next(false))
-    ESP_LOGW(TAG, "Light is already off");
-  return;
-  if (!check_sensors_()) {
-    ESP_LOGD(TAG, "Ligths will be out now");
-    this->cancel_timeout("OFF");
-    this->publish_state(false);
+  if (this->state) {
+    if (!check_sensors_()) {
+      if (this->delay_.next(true))
+        this->cancel_timeout("OFF");
+      this->publish_state(false);
+    } else {
+      ESP_LOGW(TAG, "Channels are still on");
+    }
   } else {
-    ESP_LOGW(TAG, "Channels are still on");
+    ESP_LOGW(TAG, "Light is already off");
   }
 }
 

@@ -42,7 +42,7 @@ void BinarySensorMulti::turn_off_delayed(uint32_t delay) {
 void BinarySensorMulti::turn_off_immediate() {
   if (!this->publish_dedup_.next(false))
     return;
-  this->cancel_timeout("OFF") : this->publish_state(false);
+  this->cancel_timeout("OFF");
   this->publish_state(false);
 }
 

@@ -39,7 +39,7 @@ class BinarySensorMulti : public binary_sensor::BinarySensorInitiallyOff, public
    * Turn off the sensor without processing filters.
    *
    */
-  void turn_off_immedite();
+  void turn_off_immediate();
 
  protected:
   std::vector<BinarySensorMultiChannel> channels_{};

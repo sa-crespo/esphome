@@ -36,14 +36,14 @@ void BinarySensorMulti::add_channel(binary_sensor::BinarySensor *sensor) {
 void BinarySensorMulti::turn_off_delayed(uint32_t delay) {
   if (!this->publish_dedup_.next(false))
     return;
-  this->set_timeout("OFF", delay, [this]() { this->publish_state(true); });
+  this->set_timeout("OFF", delay, [this]() { this->publish_state(false); });
 }
 
 void BinarySensorMulti::turn_off_immediate() {
   if (!this->publish_dedup_.next(false))
     return;
-
-  this->send_state_internal(false, false);
+  this->cancel_timeout("OFF") : this->publish_state(false);
+  this->publish_state(false);
 }
 
 }  // namespace binary_sensor_multi

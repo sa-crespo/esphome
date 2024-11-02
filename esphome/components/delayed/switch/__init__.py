@@ -8,6 +8,9 @@ from esphome.const import (
     ICON_LIGHTBULB,
 )
 
+CONF_TIME_OFF = "time_off"
+CONF_TIME_ADD = "time_add"
+
 DEPENDENCIES = ["binary_sensor"]
 
 delayed_ns = cg.esphome_ns.namespace("delayed")
@@ -28,6 +31,9 @@ CONFIG_SCHEMA = (
     .extend(cv.COMPONENT_SCHEMA)
     .extend(
         {
+            cv.Required(CONF_TIME_OFF): cv.templatable(
+                cv.positive_time_period_milliseconds
+            ),
             cv.Required(CONF_BINARY_SENSORS): cv.All(
                 cv.ensure_list(entry_one_binary_sensor), cv.Length(min=1, max=64)
             ),

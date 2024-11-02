@@ -23,6 +23,12 @@ void DelayedSwitch::write_state(bool state) {
   }
   this->publish_state(state);
 }
+
+void DelayedSwitch::turn_off_immediate() {
+  ESP_LOGD(TAG, "'%s' Turning OFF immediate.", this->get_name().c_str());
+  this->publish_state(this->is_inverted());
+}
+
 void DelayedSwitch::dump_config() { LOG_SWITCH("", "Delayed Switch", this); }
 
 void DelayedSwitch::add_binary_sensor(binary_sensor::BinarySensor *sensor) {

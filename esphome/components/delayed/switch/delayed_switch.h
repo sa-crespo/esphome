@@ -26,6 +26,8 @@ class DelayedSwitch : public switch_::Switch, public Component {
   void add_binary_sensor(binary_sensor::BinarySensor *sensor);
   template<typename T> void set_time_off(T time_off) { this->time_off_ = time_off; }
 
+  void turn_off_immediate();
+
  protected:
   void write_state(bool state) override;
   TemplatableValue<uint32_t> time_off_{};

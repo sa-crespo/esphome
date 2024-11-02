@@ -45,6 +45,8 @@ CONFIG_SCHEMA = (
 async def to_code(config):
     var = await switch.new_switch(config)
     await cg.register_component(var, config)
+    template_ = await cg.templatable(config[CONF_TIME_OFF], [], cg.uint32)
+    cg.add(var.set_time_off(template_))
 
     for ch in config[CONF_BINARY_SENSORS]:
         input_var = await cg.get_variable(ch[CONF_BINARY_SENSOR])

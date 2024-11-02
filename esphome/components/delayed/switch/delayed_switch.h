@@ -15,6 +15,7 @@ struct BinarySensors {
 
 class DelayedSwitch : public switch_::Switch, public Component {
  public:
+  explicit DelayedSwitch();
   void dump_config() override;
   /**
    * Add binary_sensors to the group when only one parameter is needed for the configured mapping type.
@@ -23,13 +24,16 @@ class DelayedSwitch : public switch_::Switch, public Component {
    * @param value  The value this binary_sensor represents
    */
   void add_binary_sensor(binary_sensor::BinarySensor *sensor);
+  template<typename T> void set_time_off(T time_off) { this->time_off_ = time_off; }
 
  protected:
   void write_state(bool state) override;
+  TemplatableValue<uint32_t> time_off_{};
 
  private:
   std::vector<BinarySensors> binary_sensors_{};
   bool are_binary_sensors_off();
+  void state_published(bool state);
 };
 
 }  // namespace delayed

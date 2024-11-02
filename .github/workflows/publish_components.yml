@@ -29,10 +29,13 @@ jobs:
       # Copy Binary Sensor Multi
       - name: Binary Sensor Multi
         run: |
-          pwd
-          ls -l
           mkdir -p ./esphome_components/components/binary_sensor_multi
           cp -R ./esphome/components/binary_sensor_multi ./esphome_components/components
+      # Copy Delayed Switch
+      - name: Delayed Switch
+        run: |
+          mkdir -p ./esphome_components/components/delayed
+          cp -R ./esphome/components/delayed ./esphome_components/components
       # Push external components
       - name: Push to
         run: |

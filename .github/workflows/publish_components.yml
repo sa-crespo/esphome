@@ -18,6 +18,7 @@ jobs:
         with:
           sparse-checkout: |
             esphome/components/binary_sensor_multi
+            esphome/components/delayed
       # Check out esphome-components
       - name: Check out esphome-components
         uses: actions/checkout@v3

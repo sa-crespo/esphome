@@ -16,17 +16,13 @@ void DelayedSwitch::write_state(bool state) {
   // Verify is the sensor can be off
   if (!state && this->state) {
     if (!this->are_binary_sensors_off()) {
-      ESP_LOGD(TAG, "Turn off is not allowed when binary sensors are still on. Time off will be reseted");
+      ESP_LOGI(TAG, "'%s': turn off is not allowed when binary sensors are still on. Time off will be reseted",
+               this->get_name().c_str());
       this->set_timeout("OFF", this->time_off_.value(), [this]() { this->write_state(false); });
       return;
     }
   }
   this->publish_state(state);
-}
-
-void DelayedSwitch::turn_off_immediate() {
-  ESP_LOGD(TAG, "'%s' Turning OFF immediate.", this->get_name().c_str());
-  this->publish_state(this->is_inverted());
 }
 
 void DelayedSwitch::dump_config() { LOG_SWITCH("", "Delayed Switch", this); }
@@ -42,6 +38,7 @@ bool DelayedSwitch::are_binary_sensors_off() {
   for (size_t i = 0; i < this->binary_sensors_.size(); i++) {
     auto bs = this->binary_sensors_[i];
     if (bs.binary_sensor->state) {
+      ESP_LOGI(TAG, "'%s': is still active", bs.binary_sensor->get_name().c_str());
       return false;
     }
   }

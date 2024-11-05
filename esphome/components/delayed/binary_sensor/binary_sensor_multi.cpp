@@ -38,7 +38,17 @@ void BinarySensorMulti::add_channel(binary_sensor::BinarySensor *sensor) {
 
 bool BinarySensorMulti::is_ignoring_channels() { return this->ignoring_channels_; }
 
-void BinarySensorMulti::set_ignoring_channels(bool ignoring_channels) { this->ignoring_channels_ = ignoring_channels; }
+void BinarySensorMulti::set_ignoring_channels(bool ignoring_channels) {
+  if (!this->ignore_channels_dedup_.next(ignoring_channels))
+    return;
+  this->ignoring_channels_ = ignoring_channels;
+  if (this->ignoring_channels_) {
+    this->publish_state(false);
+    ESP_LOGI(TAG, "'%s': is ignoring channels", this->get_name().c_str());
+  } else {
+    ESP_LOGI(TAG, "'%s': is following channels", this->get_name().c_str());
+  }
+}
 
 }  // namespace delayed
 }  // namespace esphome

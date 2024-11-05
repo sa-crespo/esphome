@@ -16,7 +16,7 @@ struct BinarySensorMultiChannel {
  *
  * Each binary sensor has configured parameters that each mapping type uses to compute the single numerical result
  */
-class BinarySensorMulti : public binary_sensor::BinarySensor, public Component {
+class BinarySensorMulti : public binary_sensor::BinarySensorInitiallyOff, public Component {
  public:
   void dump_config() override;
 
@@ -51,6 +51,7 @@ class BinarySensorMulti : public binary_sensor::BinarySensor, public Component {
 
  private:
   bool ignoring_channels_{false};
+  Deduplicator<bool> ignore_channels_dedup_;
 };
 
 }  // namespace delayed

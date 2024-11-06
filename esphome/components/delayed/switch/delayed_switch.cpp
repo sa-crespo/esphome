@@ -16,9 +16,11 @@ void DelayedSwitch::write_state(bool state) {
   // Verify is the sensor can be off
   if (!state && this->state) {
     if (!this->is_deactivatable()) {
-      ESP_LOGI(TAG, "'%s': turn off is not allowed when turn on channles are on. Time off will be reseted",
-               this->get_name().c_str());
-      this->set_timeout("OFF", this->time_off_.value(), [this]() { this->write_state(false); });
+      uint32_t time_off = get_time_off();
+
+      ESP_LOGI(TAG, "'%s': turn off is not allowed when turn on channles are on. Time off will be reseted to %d",
+               this->get_name().c_str(), time_off);
+      this->set_timeout("OFF", time_off, [this]() { this->write_state(false); });
       return;
     }
   }
@@ -58,6 +60,7 @@ bool DelayedSwitch::is_activatable() {
       return false;
     }
   }
+  ESP_LOGD(TAG, "'%s': is activatable.", this->get_name().c_str());
   return true;
 }
 
@@ -75,12 +78,24 @@ bool DelayedSwitch::is_deactivatable() {
 void DelayedSwitch::state_published(bool state) {
   ESP_LOGD(TAG, "State Changed");
   if (state) {
-    ESP_LOGD(TAG, "Switch is on time_off will be set");
-    this->set_timeout("OFF", this->time_off_.value(), [this]() { this->write_state(false); });
+    uint32_t time_off = get_time_off();
+    ESP_LOGD(TAG, "Switch is on time_off will be set to %d", time_off);
+    this->set_timeout("OFF", time_off, [this]() { this->write_state(false); });
   } else {
     ESP_LOGD(TAG, "Switch is off time_off will be cancel");
     this->cancel_timeout("OFF");
   }
+}
+
+uint32_t DelayedSwitch::get_time_off() {
+  uint32_t time_off;
+  if (temporary_time_off_ > 0) {
+    time_off = temporary_time_off_;
+    temporary_time_off_ = 0;
+  } else {
+    time_off = time_off_.value();
+  }
+  return time_off;
 }
 
 void DelayedSwitch::turn_off_immediate() {
@@ -91,6 +106,18 @@ void DelayedSwitch::turn_off_immediate() {
 void DelayedSwitch::turn_on_immediate() {
   ESP_LOGD(TAG, "'%s' Turning ON immediate.", this->get_name().c_str());
   this->publish_state(!this->is_inverted());
+}
+
+void DelayedSwitch::turn_on_temporary(uint32_t temporary_time_off) {
+  ESP_LOGD(TAG, "'%s' Turning ON temporary.", this->get_name().c_str());
+  this->temporary_time_off_ = temporary_time_off;
+  this->publish_state(!this->is_inverted());
+}
+
+void DelayedSwitch::turn_on(uint32_t temporary_time_off) {
+  ESP_LOGD(TAG, "'%s' Turning ON temporary.", this->get_name().c_str());
+  this->temporary_time_off_ = temporary_time_off;
+  this->write_state(!this->is_inverted());
 }
 
 }  // namespace delayed

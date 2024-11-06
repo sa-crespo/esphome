@@ -91,3 +91,51 @@ TurnOnImmediateAction = delayed_ns.class_("TurnOnImmediateAction", automation.Ac
 async def turn_on_immediate_to_code(config, action_id, template_arg, args):
     paren = await cg.get_variable(config[CONF_ID])
     return cg.new_Pvariable(action_id, template_arg, paren)
+
+
+TurnOnTemporaryAction = delayed_ns.class_("TurnOnTemporaryAction", automation.Action)
+
+
+@automation.register_action(
+    "switch.turn_on_temporary",
+    TurnOnTemporaryAction,
+    maybe_simple_id(
+        {
+            cv.Required(CONF_ID): cv.use_id(DelayedSwitch),
+            cv.Required(CONF_TIME_OFF): cv.templatable(
+                cv.positive_time_period_milliseconds
+            ),
+        }
+    ),
+)
+async def turn_on_temporary_to_code(config, action_id, template_arg, args):
+    paren = await cg.get_variable(config[CONF_ID])
+    var = cg.new_Pvariable(action_id, template_arg, paren)
+    template_ = await cg.templatable(config[CONF_TIME_OFF], [], cg.uint32)
+    cg.add(var.set_off_delay(template_))
+
+    return var
+
+
+TurnOnAction = delayed_ns.class_("TurnOnAction", automation.Action)
+
+
+@automation.register_action(
+    "switch.turn_on",
+    TurnOnAction,
+    maybe_simple_id(
+        {
+            cv.Required(CONF_ID): cv.use_id(DelayedSwitch),
+            cv.Optional(CONF_TIME_OFF): cv.templatable(
+                cv.positive_time_period_milliseconds
+            ),
+        }
+    ),
+)
+async def turn_on_to_code(config, action_id, template_arg, args):
+    paren = await cg.get_variable(config[CONF_ID])
+    var = cg.new_Pvariable(action_id, template_arg, paren)
+    if CONF_TIME_OFF in config:
+        template_ = await cg.templatable(config[CONF_TIME_OFF], [], cg.uint32)
+        cg.add(var.set_off_delay(template_))
+    return var

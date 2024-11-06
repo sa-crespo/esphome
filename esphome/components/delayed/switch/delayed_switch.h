@@ -29,10 +29,13 @@ class DelayedSwitch : public switch_::Switch, public Component {
 
   void turn_off_immediate();
   void turn_on_immediate();
+  void turn_on_temporary(uint32_t temporary_time_off);
+  void turn_on(uint32_t temporary_time_off);
 
  protected:
   void write_state(bool state) override;
   TemplatableValue<uint32_t> time_off_{};
+  uint32_t temporary_time_off_{0};
 
  private:
   std::vector<BinarySensors> turn_on_channels_{};
@@ -41,6 +44,7 @@ class DelayedSwitch : public switch_::Switch, public Component {
   bool is_activatable();
 
   void state_published(bool state);
+  uint32_t get_time_off();
 };
 
 }  // namespace delayed

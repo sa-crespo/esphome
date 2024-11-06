@@ -17,5 +17,15 @@ template<typename... Ts> class TurnOffImmediateAction : public Action<Ts...> {
   DelayedSwitch *delayed_switch_;
 };
 
+template<typename... Ts> class TurnOnImmediateAction : public Action<Ts...> {
+ public:
+  explicit TurnOnImmediateAction(DelayedSwitch *a_delayed_switch) : delayed_switch_(a_delayed_switch) {}
+
+  void play(Ts... x) override { this->delayed_switch_->turn_on_immediate(); }
+
+ protected:
+  DelayedSwitch *delayed_switch_;
+};
+
 }  // namespace delayed
 }  // namespace esphome

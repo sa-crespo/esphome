@@ -11,23 +11,25 @@ void BinarySensorMulti::dump_config() { LOG_BINARY_SENSOR("", "Multi Binary Sens
 void BinarySensorMulti::loop() { this->process_sensors_(); }
 
 bool BinarySensorMulti::check_sensors_() {
-  uint8_t num_active_sensors = 0;
-
-  // - return false when sensor is ignoring channels
-  if (this->ignoring_channels_) {
-    return false;
-  }
   // - check all binary_sensors for its state
   for (size_t i = 0; i < this->channels_.size(); i++) {
     auto bs = this->channels_[i];
     if (bs.binary_sensor->state) {
-      num_active_sensors++;
+      return true;
     }
   }
-  return (num_active_sensors > 0);
+  return false;
 }
 
-void BinarySensorMulti::process_sensors_() { this->publish_state(check_sensors_()); }
+void BinarySensorMulti::process_sensors_() {
+  bool value;
+  if (this->ignoring_channels_) {
+    value = ignoring_channels_value_;
+  } else {
+    value = check_sensors_();
+  }
+  this->publish_state(value);
+}
 
 void BinarySensorMulti::add_channel(binary_sensor::BinarySensor *sensor) {
   BinarySensorMultiChannel sensor_channel{
@@ -43,8 +45,8 @@ void BinarySensorMulti::set_ignoring_channels(bool ignoring_channels) {
     return;
   this->ignoring_channels_ = ignoring_channels;
   if (this->ignoring_channels_) {
-    this->publish_state(false);
-    ESP_LOGI(TAG, "'%s': is ignoring channels", this->get_name().c_str());
+    this->publish_state(this->ignoring_channels_value_);
+    ESP_LOGI(TAG, "'%s': is ignoring channels, value is %d", this->get_name().c_str(), this->ignoring_channels_value_);
   } else {
     ESP_LOGI(TAG, "'%s': is following channels", this->get_name().c_str());
   }

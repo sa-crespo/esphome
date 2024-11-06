@@ -42,6 +42,10 @@ class BinarySensorMulti : public binary_sensor::BinarySensorInitiallyOff, public
   bool is_ignoring_channels();
   void set_ignoring_channels(bool ignoring_channels);
 
+  void set_ignoring_channels_value(bool ignoring_channels_value) {
+    this->ignoring_channels_value_ = ignoring_channels_value;
+  };
+
  protected:
   std::vector<BinarySensorMultiChannel> channels_{};
   void process_sensors_();
@@ -51,6 +55,7 @@ class BinarySensorMulti : public binary_sensor::BinarySensorInitiallyOff, public
 
  private:
   bool ignoring_channels_{false};
+  bool ignoring_channels_value_{false};
   Deduplicator<bool> ignore_channels_dedup_;
 };
 

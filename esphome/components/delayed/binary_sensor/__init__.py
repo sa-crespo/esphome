@@ -12,6 +12,8 @@ from esphome.const import (
 
 DEPENDENCIES = ["binary_sensor"]
 
+CONF_IGNORING_CHANNELS_VALUE = "ignoring_channels_value"
+
 delayed_ns = cg.esphome_ns.namespace("delayed")
 BinarySensorMulti = delayed_ns.class_(
     "BinarySensorMulti", binary_sensor.BinarySensor, cg.Component
@@ -30,6 +32,7 @@ CONFIG_SCHEMA = binary_sensor.binary_sensor_schema(
         cv.Required(CONF_CHANNELS): cv.All(
             cv.ensure_list(entry_one_parameter), cv.Length(min=1, max=64)
         ),
+        cv.Required(CONF_IGNORING_CHANNELS_VALUE): cv.boolean,
     }
 )
 
@@ -38,6 +41,7 @@ async def to_code(config):
     var = await binary_sensor.new_binary_sensor(config)
     await cg.register_component(var, config)
 
+    cg.add(var.set_ignoring_channels_value(config[CONF_IGNORING_CHANNELS_VALUE]))
     for ch in config[CONF_CHANNELS]:
         input_var = await cg.get_variable(ch[CONF_BINARY_SENSOR])
         cg.add(var.add_channel(input_var))

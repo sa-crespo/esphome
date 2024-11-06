@@ -32,8 +32,8 @@ jobs:
         run: |
           mkdir -p ./esphome_components/components/binary_sensor_multi
           cp -R ./esphome/components/binary_sensor_multi ./esphome_components/components
-      # Copy Delayed Switch
-      - name: Delayed Switch
+      # Copy Delayed Platform
+      - name: Delayed Platform
         run: |
           mkdir -p ./esphome_components/components/delayed
           cp -R ./esphome/components/delayed ./esphome_components/components

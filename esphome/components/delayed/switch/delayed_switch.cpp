@@ -56,7 +56,7 @@ bool DelayedSwitch::is_activatable() {
   for (size_t i = 0; i < this->blocking_channels_.size(); i++) {
     auto bs = this->blocking_channels_[i];
     if (bs.binary_sensor->state) {
-      ESP_LOGI(TAG, "'%s': is active", bs.binary_sensor->get_name().c_str());
+      ESP_LOGD(TAG, "'%s': is active", bs.binary_sensor->get_name().c_str());
       return false;
     }
   }
@@ -68,7 +68,7 @@ bool DelayedSwitch::is_deactivatable() {
   for (size_t i = 0; i < this->turn_on_channels_.size(); i++) {
     auto bs = this->turn_on_channels_[i];
     if (bs.binary_sensor->state) {
-      ESP_LOGI(TAG, "'%s': is active", bs.binary_sensor->get_name().c_str());
+      ESP_LOGD(TAG, "'%s': is active", bs.binary_sensor->get_name().c_str());
       return false;
     }
   }

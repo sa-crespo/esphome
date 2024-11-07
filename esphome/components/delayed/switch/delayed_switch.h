@@ -27,24 +27,23 @@ class DelayedSwitch : public switch_::Switch, public Component {
   void add_blocking_channel(binary_sensor::BinarySensor *sensor);
   template<typename T> void set_time_off(T time_off) { this->time_off_ = time_off; }
 
-  void turn_off_immediate();
-  void turn_on_immediate();
-  void turn_on_temporary(uint32_t temporary_time_off);
-  void turn_on(uint32_t temporary_time_off);
+  virtual void turn_off_immediate();
+  virtual void turn_on_immediate();
+  virtual void turn_on_temporary(uint32_t temporary_time_off);
+  virtual void turn_on(uint32_t temporary_time_off);
 
  protected:
   void write_state(bool state) override;
-  TemplatableValue<uint32_t> time_off_{};
-  uint32_t temporary_time_off_{0};
+  virtual void state_published(bool state);
+  uint32_t get_time_off();
+  bool is_deactivatable();
+  bool is_activatable();
 
  private:
   std::vector<BinarySensors> turn_on_channels_{};
   std::vector<BinarySensors> blocking_channels_{};
-  bool is_deactivatable();
-  bool is_activatable();
-
-  void state_published(bool state);
-  uint32_t get_time_off();
+  TemplatableValue<uint32_t> time_off_{};
+  uint32_t temporary_time_off_{0};
 };
 
 }  // namespace delayed

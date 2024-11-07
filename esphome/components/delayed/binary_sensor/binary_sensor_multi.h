@@ -19,7 +19,6 @@ struct BinarySensorMultiChannel {
 class BinarySensorMulti : public binary_sensor::BinarySensorInitiallyOff, public Component {
  public:
   void dump_config() override;
-
   /**
    * The loop calls the configured type processing method
    *
@@ -27,7 +26,6 @@ class BinarySensorMulti : public binary_sensor::BinarySensorInitiallyOff, public
    * The result is only published if a binary sensor state has changed or, for some types, on initial boot
    */
   void loop() override;
-
   /**
    * Add binary_sensors to the group when only one parameter is needed for the configured mapping type.
    *
@@ -40,23 +38,29 @@ class BinarySensorMulti : public binary_sensor::BinarySensorInitiallyOff, public
    *
    */
   bool is_ignoring_channels();
+  /**
+   * Set the value for ignoring the status of the channels.
+   *
+   */
   void set_ignoring_channels(bool ignoring_channels);
-
+  /**
+   * Set the value of the sensor when is ignoring the status
+   * of the channels.
+   *
+   */
   void set_ignoring_channels_value(bool ignoring_channels_value) {
     this->ignoring_channels_value_ = ignoring_channels_value;
   };
 
  protected:
-  std::vector<BinarySensorMultiChannel> channels_{};
   void process_sensors_();
   bool check_sensors_();
-
-  Deduplicator<bool> delay_;
 
  private:
   bool ignoring_channels_{false};
   bool ignoring_channels_value_{false};
   Deduplicator<bool> ignore_channels_dedup_;
+  std::vector<BinarySensorMultiChannel> channels_{};
 };
 
 }  // namespace delayed

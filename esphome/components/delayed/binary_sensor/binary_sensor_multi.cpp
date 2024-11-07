@@ -46,9 +46,9 @@ void BinarySensorMulti::set_ignoring_channels(bool ignoring_channels) {
   this->ignoring_channels_ = ignoring_channels;
   if (this->ignoring_channels_) {
     this->publish_state(this->ignoring_channels_value_);
-    ESP_LOGI(TAG, "'%s': is ignoring channels, value is %d", this->get_name().c_str(), this->ignoring_channels_value_);
+    ESP_LOGD(TAG, "'%s': is ignoring channels, value is %d", this->get_name().c_str(), this->ignoring_channels_value_);
   } else {
-    ESP_LOGI(TAG, "'%s': is following channels", this->get_name().c_str());
+    ESP_LOGD(TAG, "'%s': is following channels", this->get_name().c_str());
   }
 }
 

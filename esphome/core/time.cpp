@@ -169,7 +169,11 @@ void ESPTime::recalc_timestamp_utc(bool use_day_of_year) {
   }
 
   for (int i = 1970; i < this->year; i++)
+<<<<<<< HEAD
     res += (i % 4 == 0) ? 366 : 365;
+=======
+    res += (year % 4 == 0) ? 366 : 365;
+>>>>>>> e62398987 (fix local time timestamp calculation (#7807))
 
   if (use_day_of_year) {
     res += this->day_of_year - 1;

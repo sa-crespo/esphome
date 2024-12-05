@@ -246,7 +246,8 @@ void I2SAudioSpeaker::speaker_task(void *params) {
   const size_t dma_buffers_size = DMA_BUFFERS_COUNT * DMA_BUFFER_DURATION_MS * bytes_per_ms;
 
   // Ensure ring buffer is at least as large as the total size of the DMA buffers
-  const size_t ring_buffer_size = std::min(dma_buffers_size, this_speaker->buffer_duration_ms_ * bytes_per_ms);
+  const size_t ring_buffer_size =
+      std::min((uint32_t) dma_buffers_size, this_speaker->buffer_duration_ms_ * bytes_per_ms);
 
   if (this_speaker->send_esp_err_to_event_group_(this_speaker->allocate_buffers_(dma_buffers_size, ring_buffer_size))) {
     // Failed to allocate buffers

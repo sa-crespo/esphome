@@ -12,8 +12,8 @@ import esphome_glyphsets as glyphsets
 from freetype import (
     FT_LOAD_NO_BITMAP,
     FT_LOAD_RENDER,
-    FT_LOAD_TARGET_MONO,
     Face,
+    ft_pixel_mode_grays,
     ft_pixel_mode_mono,
 )
 import requests
@@ -212,6 +212,7 @@ def validate_font_config(config):
             if font.get_char_index(x) != 0
         ]
 
+    if not font.is_scalable:
     if not font.is_scalable:
         sizes = [pt_to_px(x.size) for x in font.available_sizes]
         if not sizes:
@@ -519,13 +520,17 @@ async def to_code(config):
             if size in sizes:
                 font.select_size(sizes.index(size))
         else:
+        if not font.is_scalable:
+            sizes = [pt_to_px(x.size) for x in font.available_sizes]
+            if size in sizes:
+                font.select_size(sizes.index(size))
+        else:
             font.set_pixel_sizes(size, 0)
         flags = FT_LOAD_RENDER
         if bpp != 1:
             flags |= FT_LOAD_NO_BITMAP
-        else:
-            flags |= FT_LOAD_TARGET_MONO
         font.load_char(codepoint, flags)
+        font.glyph.render(mode)
         width = font.glyph.bitmap.width
         height = font.glyph.bitmap.rows
         buffer = font.glyph.bitmap.buffer
@@ -549,6 +554,7 @@ async def to_code(config):
                     pos += 1
         ascender = pt_to_px(font.size.ascender)
         if ascender == 0:
+            if not font.is_scalable:
             if not font.is_scalable:
                 ascender = size
             else:
@@ -599,6 +605,7 @@ async def to_code(config):
     font_height = pt_to_px(base_font.size.height)
     ascender = pt_to_px(base_font.size.ascender)
     if font_height == 0:
+        if not base_font.is_scalable:
         if not base_font.is_scalable:
             font_height = size
             ascender = font_height

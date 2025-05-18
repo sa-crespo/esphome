@@ -16,13 +16,17 @@ static const char *const TAG = "logger";
 #ifdef USE_ESP32
 // Implementation for ESP32 (multi-task platform with task-specific tracking)
 // Main task always uses direct buffer access for console output and callbacks
-// Other tasks:
-//  - With task log buffer: stack buffer for console output, async buffer for callbacks
-//  - Without task log buffer: only console output, no callbacks
+//
+// For non-main tasks:
+//  - WITH task log buffer: Prefer sending to ring buffer for async processing
+//    - Avoids allocating stack memory for console output in normal operation
+//    - Prevents console corruption from concurrent writes by multiple tasks
+//    - Messages are serialized through main loop for proper console output
+//    - Fallback to emergency console logging only if ring buffer is full
+//  - WITHOUT task log buffer: Only emergency console output, no callbacks
 void HOT Logger::log_vprintf_(int level, const char *tag, int line, const char *format, va_list args) {  // NOLINT
   if (level > this->level_for(tag))
-    if (level > this->level_for(tag))
-      return;
+    return;
 
   TaskHandle_t current_task = xTaskGetCurrentTaskHandle();
   bool is_main_task = (current_task == main_task_);
@@ -69,15 +73,6 @@ void HOT Logger::log_vprintf_(int level, const char *tag, int line, const char *
                                                   MAX_CONSOLE_LOG_MSG_SIZE);
       this->write_msg_(console_buffer);
     }
-
-#ifdef USE_ESPHOME_TASK_LOG_BUFFER
-    // For non-main tasks, queue the message for callbacks - but only if we have any callbacks registered
-    if (this->log_callback_.size() > 0) {
-      // This will be processed in the main loop
-      this->log_buffer_->send_message_thread_safe(static_cast<uint8_t>(level), tag, static_cast<uint16_t>(line),
-                                                  current_task, format, args);
-    }
-#endif  // USE_ESPHOME_TASK_LOG_BUFFER
 
     // Reset the recursion guard for this task
     this->reset_task_log_recursion_(is_main_task);
